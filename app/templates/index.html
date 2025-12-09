@@ -1,23 +1,58 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Boba Shop Idle Clicker</title>
-    </head>
-    <body>
-        <h1>Boba Shop Idle Clicker, WIP</h1>
-        <div>
-            <span> Score: </span><span id="score">{{ count }}</span>
-        </div>
-        <button id="main-btn">Click me</button>
+<head>
+    <title>Boba Shop Idle Clicker</title>
+</head>
+<body>
+    <h1>Boba Shop Idle Clicker, WIP</h1>
+    <div>
+        <span>Score: </span>
+        <span id="score" data-initial-count="{{ count }}">{{ count }}</span>
+    </div>
+    <button id="main-btn">Click me</button>
+    <button id="upgrade-btn" data-upgrade-unlocked="{{ upgrade_unlocked|tojson }}" disabled>+10 Click (10 points)</button>
 
-        <script>
-            document.getElementById('main-btn').onclick = function() {
-                fetch('/increment', {method: 'POST'})
+    <script>
+        // Get initial values from data attributes (no Jinja in JS)
+        const scoreElem = document.getElementById('score');
+        const upgradeBtn = document.getElementById('upgrade-btn');
+        let upgradeUnlocked = upgradeBtn.getAttribute('data-upgrade-unlocked') === 'true';
+        let count = parseInt(scoreElem.getAttribute('data-initial-count'));
+
+        function updateUpgradeButton(currentCount) {
+            if (!upgradeUnlocked && currentCount >= 10) {
+                upgradeBtn.disabled = false;
+            } else {
+                upgradeBtn.disabled = true;
+            }
+        }
+
+        document.getElementById('main-btn').onclick = function() {
+            fetch('/increment', {method: 'POST'})
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('score').textContent = data.count;
+                    scoreElem.textContent = data.count;
+                    count = data.count;
+                    upgradeUnlocked = data.upgrade_unlocked;
+                    updateUpgradeButton(count);
                 });
-            };
-        </script>
-    </body>
+        };
+
+        upgradeBtn.onclick = function() {
+            fetch('/basic_button_upgrade', {method: 'POST'})
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        upgradeUnlocked = true;
+                        upgradeBtn.disabled = true;
+                        scoreElem.textContent = data.count;
+                        count = data.count;
+                    }
+                });
+        };
+
+        // On page load, set upgrade button state
+        updateUpgradeButton(count);
+    </script>
+</body>
 </html>
