@@ -4,7 +4,20 @@
         <title>Boba Shop Idle Clicker</title>
     </head>
     <body>
-        <h1>Welcome to the Boba Shop Idle Clicker Game, WIP</h1>
-        <button>Click me</button>
+        <h1>Boba Shop Idle Clicker, WIP</h1>
+        <div>
+            <span> Score: </span><span id="score">{{ count }}</span>
+        </div>
+        <button id="main-btn">Click me</button>
+
+        <script>
+            document.getElementById('main-btn').onclick = function() {
+                fetch('/increment', {method: 'POST'})
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('score').textContent = data.count;
+                });
+            };
+        </script>
     </body>
 </html>
