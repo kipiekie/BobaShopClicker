@@ -20,5 +20,11 @@ BobaShopClicker/
 ├── requirements.txt
 ```
 
+`main.py`
+    runs the app
+
+`app/routes.py`
+    integrates back end to front end
+
 ## Notes for Development:
 I plan to use VSC for this project. Currently I plan for it to be written in Python, with front-end integration using Flask for web-hosting the application. In theory this will be one of many games to be hosted onto the website I am also building, but thats neither here nor there.
